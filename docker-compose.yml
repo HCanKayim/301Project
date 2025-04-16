@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: studenthub
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  auth-service:
+    build: ./backend/auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+
+  user-service:
+    build: ./backend/user-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+
+  course-service:
+    build: ./backend/course-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+
+  announcement-service:
+    build: ./backend/announcement-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - mongodb
+
+  message-service:
+    build: ./backend/message-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - user-service
+      - course-service
+      - announcement-service
+      - message-service
+
+volumes:
+  postgres_data:
+  mongodb_data: 

@@ -1,0 +1,13 @@
+# Node
+node_modules/
+
+# Cache
+.cache/
+
+# Java build files
+*.jar
+target/
+
+# OS files
+.DS_Store
+Thumbs.db
